@@ -3,7 +3,7 @@
 ![Java 21](https://img.shields.io/badge/language-Java%2021-9B599A.svg?style=flat-square)
 [![GitHub license](https://img.shields.io/github/license/Queerbric/pridelib?style=flat-square)](https://raw.githubusercontent.com/Queerbric/pridelib/1.19/LICENSE)
 ![Environment: Client](https://img.shields.io/badge/environment-client-1976d2?style=flat-square)
-[![Mod loader: Fabric]][fabric]
+[![Mod loader: NeoForge]][neoforge]
 ![Version](https://img.shields.io/github/v/tag/Queerbric/pridelib?label=version&style=flat-square)
 
 PrideLib is a small JIJ dependency for modders who want to use a centralized data-driven and configurable source of pride flags in their mods. PrideLib can then be used to draw randomized graphical elements, or generate other colored visuals. PrideLib lets flags be added through resource packs, optionally part of a mod. Flags used by PrideLib can be configured either with resource packs, or a config file.

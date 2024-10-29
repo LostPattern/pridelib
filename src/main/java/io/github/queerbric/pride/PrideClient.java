@@ -1,15 +1,19 @@
 package io.github.queerbric.pride;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resources.io.ResourceType;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 
-@Environment(EnvType.CLIENT)
-public class PrideClient implements ClientModInitializer {
-	@Override
-	public void onInitializeClient() {
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new PrideLoader());
+@OnlyIn(Dist.CLIENT)
+@Mod(value = "pride", dist = Dist.CLIENT)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+public class PrideClient {
+	@SubscribeEvent
+	public static void registerResources(RegisterClientReloadListenersEvent event) {
+		event.registerReloadListener(new PrideLoader());
 	}
 }

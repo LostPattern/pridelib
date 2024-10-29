@@ -4,9 +4,9 @@ import com.mojang.blaze3d.vertex.MatrixStack;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntLists;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Represents a pride flag.
@@ -62,7 +62,7 @@ public class PrideFlag {
 	 * @param width the render width of the flag
 	 * @param height the render height of the flag
 	 */
-	@Environment(EnvType.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void render(MatrixStack matrices, float x, float y, float width, float height) {
 		this.shape.render(this.colors, matrices, x, y, width, height);
 	}

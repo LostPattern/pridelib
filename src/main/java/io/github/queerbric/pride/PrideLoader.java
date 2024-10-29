@@ -1,12 +1,13 @@
 package io.github.queerbric.pride;
 
 import com.google.gson.Gson;
-import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.io.Resource;
 import net.minecraft.resources.io.ResourceManager;
-import net.minecraft.util.profiler.Profiler;
+import net.minecraft.resources.io.ResourceReloader;
+import net.minecraft.resources.io.SynchronousResourceReloader;
+import net.minecraft.util.profiling.Profiler;
+import net.neoforged.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,30 +22,24 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
-public class PrideLoader implements SimpleResourceReloadListener<List<PrideFlag>> {
+public class PrideLoader implements ResourceReloader {
 	private static final Identifier ID = Identifier.of("pride", "flags");
 	private static final Logger LOGGER = LoggerFactory.getLogger("pride");
 	private static final Gson GSON = new Gson();
 	private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("^#[0-9a-fA-F]{6}$");
 
+	@Override
+	public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager resourceManager, Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
+		return CompletableFuture.supplyAsync(() -> loadFlags(resourceManager), prepareExecutor)
+				.thenCompose(synchronizer::whenPrepared)
+				.thenAcceptAsync(PrideLoader::applyFlags, applyExecutor);
+	}
+
 	static class Config {
 		String[] flags;
 	}
 
-	@Override
-	public Identifier getFabricId() {
-		return ID;
-	}
 
-	@Override
-	public CompletableFuture<List<PrideFlag>> load(ResourceManager manager, Profiler profiler, Executor executor) {
-		return CompletableFuture.supplyAsync(() -> loadFlags(manager));
-	}
-
-	@Override
-	public CompletableFuture<Void> apply(List<PrideFlag> list, ResourceManager manager, Profiler profiler, Executor executor) {
-		return CompletableFuture.runAsync(() -> applyFlags(list));
-	}
 
 	public static List<PrideFlag> loadFlags(ResourceManager manager) {
 		var flags = new ArrayList<PrideFlag>();
@@ -74,7 +69,7 @@ public class PrideLoader implements SimpleResourceReloadListener<List<PrideFlag>
 			}
 		}
 
-		var prideFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), "pride.json");
+		var prideFile = new File(FMLPaths.CONFIGDIR.get().toFile(), "pride.json");
 		if (prideFile.exists()) {
 			try (var reader = new FileReader(prideFile)) {
 				Config config = GSON.fromJson(reader, Config.class);

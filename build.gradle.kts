@@ -1,5 +1,5 @@
 plugins {
-	id("fabric-loom") version "1.6.+"
+	id("dev.architectury.loom") version "1.6.+"
 	`java-library`
 	`maven-publish`
 }
@@ -25,6 +25,10 @@ repositories {
 		name = "ParchmentMC"
 		url = uri("https://maven.parchmentmc.org")
 	}
+	maven {
+		name = "NeoForged"
+		url = uri("https://maven.neoforged.net/releases")
+	}
 	mavenLocal()
 }
 
@@ -33,12 +37,15 @@ dependencies {
 	@Suppress("UnstableApiUsage")
 	mappings(loom.layered {
 		officialMojangMappings()
-		parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${project.property("parchment_version")}@zip")
+		parchment("org.parchmentmc.data:parchment-${project.property("parchment_version")}@zip")
 		mappings("dev.lambdaurora:yalmm:${minecraftVersion}+build.${project.property("yalmm_version")}")
 	})
-	modImplementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
+	//modImplementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
 
-	modImplementation(fabricApi.module("fabric-resource-loader-v0", project.property("fabric_api_version") as String))
+	//modImplementation(fabricApi.module("fabric-resource-loader-v0", project.property("fabric_api_version") as String))
+
+	neoForge("net.neoforged:neoforge:${project.property("neoforge_version")}")
+
 }
 
 java {
@@ -55,8 +62,7 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.processResources {
 	inputs.property("version", project.version)
-
-	filesMatching("fabric.mod.json") {
+	filesMatching("META-INF/neoforge.mods.toml") {
 		expand("version" to project.version)
 	}
 }
